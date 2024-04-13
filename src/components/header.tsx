@@ -13,6 +13,9 @@ export default function Header() {
           <Link href={'/register'}>Register</Link>
         </li>
         <li>
+          <Link href={'/products/add'}>Add Product</Link>
+        </li>
+        <li>
           <ButtonLogout />
         </li>
       </ul>

@@ -18,36 +18,37 @@ import { useRouter } from 'next/navigation';
 import { clientSessionToken } from '@/lib/http';
 import { handleErrorApi } from '@/lib/utils';
 import { useState } from 'react';
+import {
+  AccountResType,
+  UpdateMeBody,
+  UpdateMeBodyType,
+} from '@/schemaValidations/account.schema';
+import accountApiResquest from '@/apiRequests/account';
 
-export default function LoginForm() {
+type Profile = AccountResType['data'];
+
+export default function ProfileForm({ profile }: { profile: Profile }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const form = useForm<LoginBodyType>({
-    resolver: zodResolver(LoginBody),
+  const form = useForm<UpdateMeBodyType>({
+    resolver: zodResolver(UpdateMeBody),
     defaultValues: {
-      email: '',
-      password: '',
+      name: profile.name,
     },
   });
 
-  async function onSubmit(values: LoginBodyType) {
+  async function onSubmit(values: UpdateMeBodyType) {
     if (loading) return;
     setLoading(true);
     try {
-      const result = await authApiRequest.login(values);
-
-      await authApiRequest.auth({
-        sessionToken: result.payload.data.token,
-        expiresAt: result.payload.data.expiresAt,
-      });
+      const result = await accountApiResquest.updateMe(values);
 
       toast({
         description: result.payload.message,
       });
-      
-      clientSessionToken.value = result.payload.data.token;
-      router.push('/me');
+
+      router.refresh();
     } catch (error: any) {
       handleErrorApi({
         error,
@@ -65,40 +66,31 @@ export default function LoginForm() {
         className="space-y-2 w-[600px]"
         noValidate
       >
+        <FormItem>
+          <FormLabel>Email</FormLabel>
+          <FormControl>
+            <Input type="email" value={profile.email} readOnly />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+
         <FormField
           control={form.control}
-          name="email"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input
-                  type="email"
-                  formNoValidate
-                  placeholder="Email"
-                  {...field}
-                />
+                <Input placeholder="Name" type="text" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <div className="pt-8">
           <Button className="w-full" type="submit" disabled={loading}>
-            Login
+            Update
           </Button>
         </div>
       </form>

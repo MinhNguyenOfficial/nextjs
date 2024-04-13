@@ -4,8 +4,9 @@ import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import Header from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
-import AppProvider from '@/AppProvider';
+import AppProvider from '@/app-provider';
 import { cookies } from 'next/headers';
+import SlideSession from '@/components/slide-session';
 
 const inter = Inter({ subsets: ['vietnamese'] });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = cookies();
-  const sessionToken = cookieStore.get('sessionToken')
+  const sessionToken = cookieStore.get('sessionToken');
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -33,6 +34,7 @@ export default function RootLayout({
           <Header />
           <AppProvider initialSessionToken={sessionToken?.value}>
             {children}
+            <SlideSession />
           </AppProvider>
         </ThemeProvider>
         <Toaster />

@@ -39,11 +39,14 @@ export default function RegisterForm() {
     try {
       const result = await authApiRequest.register(values);
 
+      await authApiRequest.auth({
+        sessionToken: result.payload.data.token,
+        expiresAt: result.payload.data.expiresAt,
+      });
+
       toast({
         description: result.payload.message,
       });
-
-      await authApiRequest.auth({ sessionToken: result.payload.data.token });
       clientSessionToken.value = result.payload.data.token;
       router.push('/me');
     } catch (error: any) {
