@@ -45,9 +45,10 @@ export default function LoginForm() {
       toast({
         description: result.payload.message,
       });
-      
+
       clientSessionToken.value = result.payload.data.token;
-      router.push('/me');
+      router.push('/');
+      router.refresh();
     } catch (error: any) {
       handleErrorApi({
         error,

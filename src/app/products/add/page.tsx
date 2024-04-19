@@ -1,4 +1,4 @@
-import ProductAddFrom from '@/app/products/add/product-add-from';
+import ProductAddFrom from '@/app/products/_components/product-add-from';
 
 export default function ProductPage() {
   return (

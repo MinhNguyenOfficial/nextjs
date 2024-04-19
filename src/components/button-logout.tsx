@@ -19,6 +19,8 @@ export default function ButtonLogout() {
       authApiRequest.logoutFromNextClientToNextServer(true).then(() => {
         router.push(`/login?redirectFrom=${pathName}`);
       });
+    } finally {
+      router.refresh();
     }
   };
   return (
